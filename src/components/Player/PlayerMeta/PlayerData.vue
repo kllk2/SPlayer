@@ -23,7 +23,7 @@
             <SvgIcon
               :depth="3"
               :name="musicStore.playSong.pc ? 'Cloud' : 'CloudLockOpen'"
-              size="22"
+              :size="cssVars['--pd-icon-size']"
             />
           </template>
           <div class="player-tip">
@@ -84,7 +84,7 @@
       </n-flex>
       <!-- 歌手 -->
       <div v-if="musicStore.playSong.type !== 'radio'" class="artists">
-        <SvgIcon :depth="3" name="Artist" size="20" />
+        <SvgIcon :depth="3" name="Artist" :size="cssVars['--pd-icon-small']" />
         <div v-if="Array.isArray(musicStore.playSong.artists)" class="ar-list">
           <span
             v-for="ar in musicStore.playSong.artists"
@@ -104,14 +104,14 @@
         </div>
       </div>
       <div v-else class="artists">
-        <SvgIcon :depth="3" name="Artist" size="20" />
+        <SvgIcon :depth="3" name="Artist" :size="cssVars['--pd-icon-small']" />
         <div class="ar-list">
           <span class="ar">{{ musicStore.playSong.dj?.creator || "未知艺术家" }}</span>
         </div>
       </div>
       <!-- 专辑 -->
       <div v-if="musicStore.playSong.type !== 'radio'" class="album">
-        <SvgIcon :depth="3" name="Album" size="20" />
+        <SvgIcon :depth="3" name="Album" :size="cssVars['--pd-icon-small']" />
         <span
           v-if="isObject(musicStore.playSong.album)"
           class="name-text text-hidden"
@@ -137,7 +137,7 @@
         class="dj"
         @click="jumpPage({ name: 'dj', query: { id: musicStore.playSong.dj?.id } })"
       >
-        <SvgIcon :depth="3" name="Podcast" size="20" />
+        <SvgIcon :depth="3" name="Podcast" :size="cssVars['--pd-icon-small']" />
         <span class="name-text text-hidden">{{ musicStore.playSong.dj?.name || "播客电台" }}</span>
       </div>
     </n-flex>
@@ -177,6 +177,8 @@ const cssVars = computed(() => {
     "--pd-sub-size": getFontSize(18, mode),
     "--pd-text-size": getFontSize(16, mode),
     "--pd-meta-size": getFontSize(12, mode),
+    "--pd-icon-size": getFontSize(22, mode),
+    "--pd-icon-small": getFontSize(20, mode),
   };
 });
 

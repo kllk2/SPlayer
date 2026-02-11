@@ -1,11 +1,11 @@
 <template>
-  <div class="player-control">
+  <div class="player-control" :style="cssVars">
     <Transition name="fade" mode="out-in">
       <div v-show="statusStore.playerMetaShow" class="control-content" @click.stop>
         <n-flex class="left" align="center">
           <!-- 收起 -->
           <div class="menu-icon" @click.stop="statusStore.showFullPlayer = false">
-            <SvgIcon name="Down" />
+            <SvgIcon name="Down" :size="cssVars['--pc-menu-icon-size']" />
           </div>
           <!-- 喜欢歌曲 -->
           <div
@@ -17,6 +17,7 @@
           >
             <SvgIcon
               :name="dataStore.isLikeSong(musicStore.playSong.id) ? 'Favorite' : 'FavoriteBorder'"
+              :size="cssVars['--pc-menu-icon-size']"
             />
           </div>
           <!-- 添加到歌单 -->
@@ -25,7 +26,7 @@
             class="menu-icon"
             @click.stop="openPlaylistAdd([musicStore.playSong], !!musicStore.playSong.path)"
           >
-            <SvgIcon name="AddList" />
+            <SvgIcon name="AddList" :size="cssVars['--pc-menu-icon-size']" />
           </div>
           <!-- 下载 -->
           <div
@@ -37,7 +38,7 @@
             "
             @click.stop="openDownloadSong(musicStore.playSong)"
           >
-            <SvgIcon name="Download" />
+            <SvgIcon name="Download" :size="cssVars['--pc-menu-icon-size']" />
           </div>
           <!-- 显示评论 -->
           <div
@@ -49,7 +50,11 @@
             class="menu-icon"
             @click.stop="statusStore.showPlayerComment = !statusStore.showPlayerComment"
           >
-            <SvgIcon :depth="statusStore.showPlayerComment ? 1 : 3" name="Message" />
+            <SvgIcon
+              :depth="statusStore.showPlayerComment ? 1 : 3"
+              name="Message"
+              :size="cssVars['--pc-menu-icon-size']"
+            />
           </div>
         </n-flex>
         <div class="center">
@@ -59,7 +64,7 @@
               <div class="btn-icon mode-icon" @click.stop="player.toggleShuffle()">
                 <SvgIcon
                   :name="statusStore.shuffleIcon"
-                  :size="20"
+                  :size="cssVars['--pc-icon-small']"
                   :depth="statusStore.shuffleMode === 'off' ? 3 : 1"
                 />
               </div>
@@ -70,11 +75,11 @@
               class="btn-icon"
               v-debounce="() => songManager.personalFMTrash(musicStore.personalFMSong?.id)"
             >
-              <SvgIcon class="icon" :size="18" name="ThumbDown" />
+              <SvgIcon class="icon" :size="cssVars['--pc-icon-small']" name="ThumbDown" />
             </div>
             <!-- 上一曲 -->
             <div v-else class="btn-icon" v-debounce="() => player.nextOrPrev('prev')">
-              <SvgIcon :size="26" name="SkipPrev" />
+              <SvgIcon :size="cssVars['--pc-icon-medium']" name="SkipPrev" />
             </div>
             <!-- 播放暂停 -->
             <n-button
@@ -93,21 +98,21 @@
                   <SvgIcon
                     :key="statusStore.playStatus ? 'Pause' : 'Play'"
                     :name="statusStore.playStatus ? 'Pause' : 'Play'"
-                    :size="28"
+                    :size="cssVars['--pc-play-icon-size']"
                   />
                 </Transition>
               </template>
             </n-button>
             <!-- 下一曲 -->
             <div class="btn-icon" v-debounce="() => player.nextOrPrev('next')">
-              <SvgIcon :size="26" name="SkipNext" />
+              <SvgIcon :size="cssVars['--pc-icon-medium']" name="SkipNext" />
             </div>
             <!-- 循环按钮 -->
             <template v-if="musicStore.playSong.type !== 'radio' && !statusStore.personalFmMode">
               <div class="btn-icon mode-icon" @click.stop="player.toggleRepeat()">
                 <SvgIcon
                   :name="statusStore.repeatIcon"
-                  :size="20"
+                  :size="cssVars['--pc-icon-small']"
                   :depth="statusStore.repeatMode === 'off' ? 3 : 1"
                 />
               </div>
@@ -136,6 +141,7 @@ import { useDataStore, useMusicStore, useStatusStore, useSettingStore } from "@/
 import { toLikeSong } from "@/utils/auth";
 import { useTimeFormat } from "@/composables/useTimeFormat";
 import { openDownloadSong, openPlaylistAdd } from "@/utils/modal";
+import { getFontSize } from "@/utils/style";
 
 const dataStore = useDataStore();
 const musicStore = useMusicStore();
@@ -146,6 +152,25 @@ const songManager = useSongManager();
 const player = usePlayerController();
 
 const { timeDisplay, toggleTimeFormat } = useTimeFormat();
+
+// 样式变量
+const cssVars = computed(() => {
+  const mode = settingStore.lyricFontSizeMode;
+  return {
+    "--pc-height": getFontSize(80, mode),
+    "--pc-icon-box-size": getFontSize(38, mode),
+    "--pc-icon-small": getFontSize(20, mode),
+    "--pc-icon-medium": getFontSize(26, mode),
+    "--pc-play-btn-size": getFontSize(44, mode),
+    "--pc-play-icon-size": getFontSize(28, mode),
+    "--pc-menu-icon-size": getFontSize(24, mode),
+    "--pc-slider-text-size": getFontSize(12, mode),
+    "--pc-slider-width": getFontSize(480, mode),
+    "--pc-slider-margin": getFontSize(8, mode),
+    "--pc-slider-handle": getFontSize(12, mode),
+    "--pc-slider-rail": getFontSize(4, mode),
+  };
+});
 </script>
 
 <style lang="scss" scoped>
@@ -153,7 +178,7 @@ const { timeDisplay, toggleTimeFormat } = useTimeFormat();
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 80px;
+  height: var(--pc-height);
   overflow: hidden;
   .control-content {
     width: 100%;
@@ -179,7 +204,7 @@ const { timeDisplay, toggleTimeFormat } = useTimeFormat();
         transform 0.3s;
       cursor: pointer;
       .n-icon {
-        font-size: 24px;
+        font-size: var(--pc-menu-icon-size);
         color: rgb(var(--main-cover-color));
       }
       &:hover {
@@ -206,7 +231,7 @@ const { timeDisplay, toggleTimeFormat } = useTimeFormat();
   }
   .center {
     height: 100%;
-    max-height: 80px;
+    max-height: var(--pc-height);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -219,8 +244,8 @@ const { timeDisplay, toggleTimeFormat } = useTimeFormat();
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 38px;
-        height: 38px;
+        width: var(--pc-icon-box-size);
+        height: var(--pc-icon-box-size);
         border-radius: 50%;
         will-change: transform;
         transition:
@@ -240,8 +265,8 @@ const { timeDisplay, toggleTimeFormat } = useTimeFormat();
         }
       }
       .play-pause {
-        --n-width: 44px;
-        --n-height: 44px;
+        --n-width: var(--pc-play-btn-size);
+        --n-height: var(--pc-play-btn-size);
         --n-color: rgba(var(--main-cover-color), 0.14);
         --n-color-hover: rgba(var(--main-cover-color), 0.2);
         --n-color-focus: rgba(var(--main-cover-color), 0.2);
@@ -270,12 +295,12 @@ const { timeDisplay, toggleTimeFormat } = useTimeFormat();
       flex-direction: row;
       align-items: center;
       width: 100%;
-      max-width: 480px;
-      font-size: 12px;
+      max-width: var(--pc-slider-width);
+      font-size: var(--pc-slider-text-size);
       .n-slider {
-        margin: 6px 8px;
-        --n-handle-size: 12px;
-        --n-rail-height: 4px;
+        margin: 6px var(--pc-slider-margin);
+        --n-handle-size: var(--pc-slider-handle);
+        --n-rail-height: var(--pc-slider-rail);
       }
       span {
         opacity: 0.6;

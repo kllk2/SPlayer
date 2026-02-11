@@ -1,5 +1,5 @@
 <template>
-  <n-flex :size="8" align="center" class="right-menu">
+  <n-flex :size="8" align="center" class="right-menu" :style="cssVars">
     <!-- 音质 -->
     <template v-if="settingStore.showPlayerQuality">
       <n-popselect
@@ -46,7 +46,11 @@
       class="hidden"
     >
       <div class="menu-icon hidden" @click.stop="player.toggleDesktopLyric()">
-        <SvgIcon name="DesktopLyric2" :depth="statusStore.showDesktopLyric ? 1 : 3" />
+        <SvgIcon
+          name="DesktopLyric2"
+          :depth="statusStore.showDesktopLyric ? 1 : 3"
+          :size="cssVars['--prm-icon-size']"
+        />
       </div>
     </n-badge>
     <!-- 其他控制 -->
@@ -57,14 +61,14 @@
       @select="handleControls"
     >
       <div class="menu-icon hidden">
-        <SvgIcon name="Controls" />
+        <SvgIcon name="Controls" :size="cssVars['--prm-icon-size']" />
       </div>
     </n-dropdown>
     <!-- 音量 -->
     <n-popover :show-arrow="false" :style="{ padding: 0 }">
       <template #trigger>
         <div class="menu-icon hidden" @click.stop="player.toggleMute" @wheel="player.setVolume">
-          <SvgIcon :name="statusStore.playVolumeIcon" />
+          <SvgIcon :name="statusStore.playVolumeIcon" :size="cssVars['--prm-icon-size']" />
         </div>
       </template>
       <div class="volume-change" @wheel="player.setVolume">
@@ -91,7 +95,7 @@
       }"
     >
       <div class="menu-icon" @click.stop="statusStore.playListShow = !statusStore.playListShow">
-        <SvgIcon name="PlayList" />
+        <SvgIcon name="PlayList" :size="cssVars['--prm-icon-size']" />
       </div>
     </n-badge>
   </n-flex>
@@ -105,6 +109,7 @@ import { renderIcon } from "@/utils/helper";
 import { openAutoClose, openChangeRate, openEqualizer, openABLoop } from "@/utils/modal";
 import type { DropdownOption } from "naive-ui";
 import { useQualityControl } from "@/composables/useQualityControl";
+import { getFontSize } from "@/utils/style";
 
 const dataStore = useDataStore();
 const statusStore = useStatusStore();
@@ -208,6 +213,16 @@ watch([() => dataStore.userData.vipType, () => settingStore.disableAiAudio], asy
   statusStore.availableQualities = [];
   await loadQualities();
 });
+
+const cssVars = computed(() => {
+  const mode = settingStore.lyricFontSizeMode;
+  return {
+    "--prm-icon-size": getFontSize(22, mode),
+    "--prm-icon-padding": getFontSize(8, mode),
+    "--prm-tag-height": getFontSize(26, mode),
+    "--prm-tag-padding": getFontSize(8, mode),
+  };
+});
 </script>
 
 <style scoped lang="scss">
@@ -216,14 +231,14 @@ watch([() => dataStore.userData.vipType, () => settingStore.disableAiAudio], asy
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 8px;
+    padding: var(--prm-icon-padding);
     border-radius: 8px;
     transition:
       background-color 0.3s,
       transform 0.3s;
     cursor: pointer;
     .n-icon {
-      font-size: 22px;
+      font-size: var(--prm-icon-size);
       color: var(--primary-hex);
     }
     &:hover {
@@ -243,8 +258,8 @@ watch([() => dataStore.userData.vipType, () => settingStore.disableAiAudio], asy
     }
   }
   .quality-tag {
-    height: 26px;
-    padding: 0 8px;
+    height: var(--prm-tag-height);
+    padding: 0 var(--prm-tag-padding);
     border-radius: 8px;
     cursor: pointer;
   }
