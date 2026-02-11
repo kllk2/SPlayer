@@ -5,9 +5,9 @@ import { ipcLog } from "../logger";
 import { LocalMusicService } from "../services/LocalMusicService";
 import { DownloadService } from "../services/DownloadService";
 import { MusicMetadataService } from "../services/MusicMetadataService";
-import { useStore } from "../store";
 import { chunkArray } from "../utils/helper";
 import { processMusicList } from "../utils/format";
+import { getCoverDir } from "../utils/paths";
 
 /** 本地音乐服务 */
 const localMusicService = new LocalMusicService();
@@ -15,13 +15,6 @@ const localMusicService = new LocalMusicService();
 const downloadService = new DownloadService();
 /** 音乐元数据服务 */
 const musicMetadataService = new MusicMetadataService();
-
-/** 获取封面目录路径 */
-const getCoverDir = (): string => {
-  const store = useStore();
-  const localCachePath = join(store.get("cachePath"), "local-data");
-  return join(localCachePath, "covers");
-};
 
 /**
  * 处理本地音乐同步（批量流式传输）

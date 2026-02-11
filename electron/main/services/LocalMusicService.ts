@@ -1,10 +1,9 @@
 import { existsSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
-import { join } from "node:path";
 import { LocalMusicDB, type MusicTrack } from "../database/LocalMusicDB";
 import { processLog } from "../logger";
-import { useStore } from "../store";
 import { loadNativeModule } from "../utils/native-loader";
+import { getLocalDataPaths } from "../utils/paths";
 
 type toolModule = typeof import("@native/tools");
 const tools: toolModule = loadNativeModule("tools.node", "tools");
@@ -46,14 +45,7 @@ export class LocalMusicService {
 
   /** 获取动态路径 */
   get paths() {
-    const store = useStore();
-    const localCachePath = join(store.get("cachePath"), "local-data");
-    return {
-      dbPath: join(localCachePath, "library.db"),
-      jsonPath: join(localCachePath, "library.json"),
-      coverDir: join(localCachePath, "covers"),
-      cacheDir: localCachePath,
-    };
+    return getLocalDataPaths();
   }
 
   /** 初始化 */
