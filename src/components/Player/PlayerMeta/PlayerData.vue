@@ -1,7 +1,7 @@
 <template>
   <div
     :class="['player-data', settingStore.playerType, { center, light }]"
-    :style="{ marginLeft: leftMargin }"
+    :style="{ marginLeft: leftMargin, ...cssVars }"
   >
     <!-- 名称 -->
     <div class="name">
@@ -152,6 +152,7 @@ import { removeBrackets } from "@/utils/format";
 import { SongUnlockServer } from "@/core/player/SongManager";
 import { useLyricManager } from "@/core/player/LyricManager";
 import { usePlayerController } from "@/core/player/PlayerController";
+import { getFontSize } from "@/utils/style";
 const props = defineProps<{
   /** 数据居中 */
   center?: boolean;
@@ -165,6 +166,19 @@ const statusStore = useStatusStore();
 const settingStore = useSettingStore();
 const lyricManager = useLyricManager();
 const player = usePlayerController();
+
+// 字体大小变量
+const cssVars = computed(() => {
+  const mode = settingStore.lyricFontSizeMode;
+  // 唱片模式下字体较大
+  const nameSize = settingStore.playerType === "record" ? 30 : 26;
+  return {
+    "--pd-name-size": getFontSize(nameSize, mode),
+    "--pd-sub-size": getFontSize(18, mode),
+    "--pd-text-size": getFontSize(16, mode),
+    "--pd-meta-size": getFontSize(12, mode),
+  };
+});
 
 // 当前歌词模式
 const lyricMode = computed(() => {
@@ -272,7 +286,7 @@ const jumpPage = debounce(
     align-items: center;
     margin-left: 4px;
     .name-text {
-      font-size: 26px;
+      font-size: var(--pd-name-size);
       font-weight: bold;
     }
     .n-icon {
@@ -284,7 +298,7 @@ const jumpPage = debounce(
   .alia {
     margin: 6px 0 6px 4px;
     opacity: 0.6;
-    font-size: 18px;
+    font-size: var(--pd-sub-size);
     line-clamp: 1;
     -webkit-line-clamp: 1;
   }
@@ -302,7 +316,7 @@ const jumpPage = debounce(
       overflow: hidden;
       word-break: break-all;
       .ar {
-        font-size: 16px;
+        font-size: var(--pd-text-size);
         opacity: 0.7;
         display: inline-flex;
         transition: opacity 0.3s;
@@ -325,7 +339,7 @@ const jumpPage = debounce(
   }
   .album,
   .dj {
-    font-size: 16px;
+    font-size: var(--pd-text-size);
     display: flex;
     align-items: center;
     .n-icon {
@@ -346,7 +360,7 @@ const jumpPage = debounce(
     padding: 4px 4px;
     opacity: 0.6;
     .meta-item {
-      font-size: 12px;
+      font-size: var(--pd-meta-size);
       border-radius: 8px;
       padding: 2px 6px;
       border: 1px solid rgba(var(--main-cover-color), 0.6);
@@ -368,9 +382,6 @@ const jumpPage = debounce(
     width: 100%;
     padding: 0 80px 0 24px;
     .name {
-      .name-text {
-        font-size: 30px;
-      }
       .extra-info {
         position: absolute;
         right: -34px;
