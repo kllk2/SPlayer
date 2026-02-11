@@ -35,6 +35,10 @@ export const processMusicList = (tracks: MusicTrack[], coverDir: string) => {
       ...track,
       name: track.title,
       cover,
+      // 保持原始字节数，供前端使用 formatFileSize 处理
+      size: track.size,
+      // 转换为毫秒
+      duration: track.duration * 1000,
       // 码率映射到 quality 字段
       quality: track.bitrate ?? 0,
     };

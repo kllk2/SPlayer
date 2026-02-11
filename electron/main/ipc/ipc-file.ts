@@ -35,13 +35,9 @@ const handleLocalMusicSync = async (
   try {
     const coverDir = getCoverDir();
     // 刷新本地音乐库
-    const allTracks = await localMusicService.refreshLibrary(
-      dirs,
-      (current, total) => {
-        event.sender.send("music-sync-progress", { current, total });
-      },
-      () => {},
-    );
+    const allTracks = await localMusicService.refreshLibrary(dirs, (current, total) => {
+      event.sender.send("music-sync-progress", { current, total });
+    });
     // 处理音乐封面路径
     const finalTracks = processMusicList(allTracks, coverDir);
     // 分块发送

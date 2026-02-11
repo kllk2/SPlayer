@@ -305,9 +305,10 @@ const getMusicFolder = async (): Promise<string[]> => {
   return paths.filter((p) => p && p.trim() !== "");
 };
 
-// 全部音乐大小
+// 全部音乐大小（基于筛选后的数据）
 const allMusicSize = computed<number>(() => {
   const totalBytes = listData.value.reduce((total, song) => (total += song?.size || 0), 0);
+  // 从字节转换为 GB
   return Number((totalBytes / (1024 * 1024 * 1024)).toFixed(2));
 });
 
