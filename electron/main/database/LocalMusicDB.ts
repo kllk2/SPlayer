@@ -75,6 +75,16 @@ export class LocalMusicDB {
     this.dbPath = dbPath;
   }
 
+  /**
+   * 转义 SQL LIKE 通配符
+   * @param str 需要转义的字符串
+   * @returns 转义后的字符串
+   */
+  private escapeLike(str: string): string {
+    // 使用 ^ 作为转义字符，同时转义 ^ 本身
+    return str.replace(/\^/g, "^^").replace(/%/g, "^%").replace(/_/g, "^_");
+  }
+
   /** 初始化数据库 */
   public init() {
     if (this.db) return;
@@ -266,14 +276,11 @@ export class LocalMusicDB {
     // 确保路径以分隔符结尾，避免匹配到同名前缀的其他目录
     const pathWithSep =
       dirPath.endsWith("/") || dirPath.endsWith("\\") ? dirPath : dirPath + "/";
-    // 先统一路径分隔符
+    // 统一路径分隔符并转义 LIKE 通配符
     const unixBase = pathWithSep.replace(/\\/g, "/");
     const winBase = pathWithSep.replace(/\//g, "\\");
-    // 转义 LIKE 通配符（使用 ^ 作为转义字符，同时转义 ^ 本身）
-    const escapeLike = (s: string) =>
-      s.replace(/\^/g, "^^").replace(/%/g, "^%").replace(/_/g, "^_");
-    const unixPath = escapeLike(unixBase) + "%";
-    const winPath = escapeLike(winBase) + "%";
+    const unixPath = this.escapeLike(unixBase) + "%";
+    const winPath = this.escapeLike(winBase) + "%";
     // 使用 OR 查询并指定 ESCAPE 字符
     return this.db
       .prepare("SELECT * FROM tracks WHERE path LIKE ? ESCAPE '^' OR path LIKE ? ESCAPE '^'")

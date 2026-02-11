@@ -9,6 +9,30 @@ import { loadNativeModule } from "../utils/native-loader";
 type toolModule = typeof import("@native/tools");
 const tools: toolModule = loadNativeModule("tools.node", "tools");
 
+/** 扫描进度事件 */
+interface ScanProgressEvent {
+  event: "progress";
+  progress: {
+    current: number;
+    total: number;
+  };
+}
+
+/** 扫描批量数据事件 */
+interface ScanBatchEvent {
+  event: "batch";
+  tracks: MusicTrack[];
+}
+
+/** 扫描结束事件 */
+interface ScanEndEvent {
+  event: "end";
+  deletedPaths?: string[];
+}
+
+/** 扫描事件联合类型 */
+type ScanEvent = ScanProgressEvent | ScanBatchEvent | ScanEndEvent;
+
 /** 本地音乐服务 */
 export class LocalMusicService {
   /** 数据库实例 */
@@ -90,7 +114,7 @@ export class LocalMusicService {
       console.time("RustScanStream");
       await new Promise<void>((resolve, reject) => {
         tools
-          .scanMusicLibrary(dbPath, dirPaths, coverDir, (err, event) => {
+          .scanMusicLibrary(dbPath, dirPaths, coverDir, (err, event: ScanEvent | null) => {
             if (err) {
               processLog.error("[LocalMusicService] 原生模块扫描时出错:", err);
               return;

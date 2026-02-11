@@ -192,17 +192,19 @@ export const getCoverColor = async (coverUrl: string) => {
 
 /**
  * 发送任务栏封面颜色
- * 从 statusStore.songCoverTheme 读取封面主色
+ * 从 statusStore.songCoverTheme 读取封面主色并发送到任务栏
+ * @returns void
  */
-export const sendTaskbarCoverColor = () => {
+export const sendTaskbarCoverColor = (): void => {
   const settingStore = useSettingStore();
+  // 如果未启用主题颜色跟随，则清除任务栏颜色
   if (!settingStore.taskbarLyricUseThemeColor) {
     sendTaskbarThemeColor(null);
     return;
   }
   const statusStore = useStatusStore();
   const coverTheme = statusStore.songCoverTheme;
-  // 检查亮暗模式数据是否存在
+  // 确保亮暗模式的主色都存在
   if (!coverTheme?.dark?.primary || !coverTheme?.light?.primary) return;
   const darkPrimary = coverTheme.dark.primary;
   const lightPrimary = coverTheme.light.primary;
