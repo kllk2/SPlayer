@@ -171,6 +171,13 @@ watch(
       border-color: rgba(var(--primary), 0.58);
       background-color: rgba(var(--primary), 0.28);
     }
+    &.no-cover {
+      .data {
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+    }
   }
   .song-list {
     width: 100%;
