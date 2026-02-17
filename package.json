@@ -14,8 +14,7 @@
   "license-file": "LICENSE",
   "engines": {
     "node": ">=20",
-    "npm": ">=11",
-    "pnpm": ">=10"
+    "npm": ">=11"
   },
   "type": "module",
   "scripts": {
