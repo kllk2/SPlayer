@@ -406,7 +406,8 @@ class SongManager {
     // 在线获取
     try {
       // 是否可解锁
-      const canUnlock = isElectron && song.type !== "radio" && settingStore.useSongUnlock;
+      // const canUnlock = isElectron && song.type !== "radio" && settingStore.useSongUnlock;
+      const canUnlock = true;
       
       console.log("kllk 能否解锁", canUnlock);
       console.log("kllk forceSource", forceSource);
