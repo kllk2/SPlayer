@@ -129,6 +129,7 @@ class SongManager {
     if (settingStore.disableAiAudio && AI_AUDIO_LEVELS.includes(level)) {
       level = "hires";
     }
+    console.log(`kllk 获取歌曲播放连接,入参 id= ${id} level=${level}`);
     const res = await songUrl(id, level);
     console.log(`🌐 ${id} music data:`, res);
     const songData = res.data?.[0];
@@ -146,6 +147,11 @@ class SongManager {
           .replace(/m704\.music\.126\.net/g, "m701.music.126.net");
     // 若为试听且未开启试听播放，则将 url 置为空，仅标记为试听
     const finalUrl = isTrial && !settingStore.playSongDemo ? null : normalizedUrl;
+
+    console.log(`kllk 是否仅能试听`,isTrial);
+    console.log(`kllk 是否开启试听播放`,settingStore.playSongDemo);
+    console.log(`kllk finalUrl`,finalUrl);
+    
     // 获取音质
     const quality = handleSongQuality(songData, "online");
     // 检查本地缓存
@@ -345,6 +351,10 @@ class SongManager {
    * @returns 音频源
    */
   public getAudioSource = async (song: SongType, forceSource?: string): Promise<AudioSource> => {
+
+    console.log("kllk 获取音频源 getAudioSource 第1个入参",song);
+    console.log("kllk 获取音频源 getAudioSource 第2个入参",forceSource);
+    
     const settingStore = useSettingStore();
 
     // 本地文件直接返回
@@ -378,6 +388,8 @@ class SongManager {
     const songId = song.type === "radio" ? song.dj?.id : song.id;
     if (!songId) return { id: 0, url: undefined, quality: undefined, isUnlocked: false };
 
+    console.log("kllk 歌曲id songid=",songId)
+
     // 检查缓存并返回
     if (
       !forceSource &&
@@ -395,10 +407,16 @@ class SongManager {
     try {
       // 是否可解锁
       const canUnlock = isElectron && song.type !== "radio" && settingStore.useSongUnlock;
+      
+      console.log("kllk 能否解锁", canUnlock);
+      console.log("kllk forceSource", forceSource);
+
 
       // 如果指定了非官方源，直接走解锁流程
       if (forceSource && forceSource !== "auto") {
+          console.log("kllk 如果指定了非官方源，直接走解锁流程");
         if (!canUnlock) {
+          console.log("kllk 如果不支持解锁但请求了非官方源，返回失败", forceSource)
           // 如果不支持解锁但请求了非官方源，返回失败
           return { id: songId, url: undefined };
         }
@@ -415,6 +433,8 @@ class SongManager {
       // 如果指定了官方源，或未指定 (默认优先官方)
       // 尝试获取官方链接
       const { url: officialUrl, isTrial, quality } = await this.getOnlineUrl(songId, !!song.pc);
+      console.log(`kllk 获取官方链接 officialUrl = ${officialUrl} isTrial=${isTrial} quality = ${quality}`)
+
       // 如果官方链接有效且非试听（或者用户接受试听）
       if (officialUrl && (!isTrial || (isTrial && settingStore.playSongDemo))) {
         if (isTrial) window.$message.warning("当前歌曲仅可试听");
@@ -422,6 +442,7 @@ class SongManager {
       }
       // 如果官方失败（或被跳过），且未强制指定 auto (或者指定了 auto 但允许回退 - 即 Auto 模式)
       if ((!forceSource || forceSource === "auto") && canUnlock) {
+        console.log("kllk 如果官方失败（或被跳过），且未强制指定 auto");
         const unlockUrl = await this.getUnlockSongUrl(song);
         if (unlockUrl.url) {
           console.log(`🔓 [${songId}] 解锁成功`, unlockUrl);
