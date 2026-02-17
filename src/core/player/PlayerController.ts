@@ -158,7 +158,9 @@ class PlayerController {
       // 立即停止当前播放
       audioManager.stop();
       statusStore.playLoading = true;
+      console.log("kllk 获取音频源 入参", playSongData);
       const audioSource = await songManager.getAudioSource(playSongData);
+      console.log("kllk 获取音频源 结果", audioSource);
       // 检查请求是否过期
       if (requestToken !== this.currentRequestToken) {
         console.log(`🚫 [${playSongData.id}] 请求已过期，舍弃`);
@@ -326,6 +328,7 @@ class PlayerController {
 
       // 计算渐入时间
       const fadeTime = settingStore.getFadeTime ? settingStore.getFadeTime / 1000 : 0;
+      console.log("kllk 开始播放，audioManager.play", url)
       await audioManager.play(url, {
         fadeIn: !!fadeTime,
         fadeDuration: fadeTime,
