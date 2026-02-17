@@ -442,7 +442,8 @@ class SongManager {
         return { id: songId, url: officialUrl, quality, isUnlocked: false, source: "official" };
       }
       // 如果官方失败（或被跳过），且未强制指定 auto (或者指定了 auto 但允许回退 - 即 Auto 模式)
-      if ((!forceSource || forceSource === "auto") && canUnlock) {
+      // if ((!forceSource || forceSource === "auto") && canUnlock) {
+      if ((!forceSource || forceSource === "auto")) {
         console.log("kllk 如果官方失败（或被跳过），且未强制指定 auto");
         const unlockUrl = await this.getUnlockSongUrl(song);
         if (unlockUrl.url) {
