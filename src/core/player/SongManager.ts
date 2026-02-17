@@ -216,7 +216,7 @@ class SongManager {
     if (servers.length === 0) {
       return { id: songId, url: undefined };
     }
-
+    console.log("kllk 获取的音源列表：", servers)
     // 并发执行
     const results = await Promise.allSettled(
       servers.map((server) =>
@@ -227,6 +227,7 @@ class SongManager {
         })),
       ),
     );
+    console.log("kllk 获取的音源列表 结果：", results)
 
     // 按顺序找成功项
     for (const r of results) {
