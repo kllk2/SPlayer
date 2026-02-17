@@ -52,7 +52,7 @@ export const songUrl = (
 export const unlockSongUrl = (id: number, keyword: string, server: SongUnlockServer) => {
   const params = server === SongUnlockServer.NETEASE ? { id } : { keyword };
   return request({
-    baseURL: "/api/unblock",
+    baseURL: import.meta.env.VITE_API_BASE_URL + "/api/unblock",
     url: `/${server}`,
     params: { ...params, noCookie: true },
   });
