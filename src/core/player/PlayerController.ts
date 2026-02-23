@@ -328,8 +328,8 @@ class PlayerController {
 
       // 计算渐入时间
       const fadeTime = settingStore.getFadeTime ? settingStore.getFadeTime / 1000 : 0;
-      console.log("kllk 开始播放，audioManager.play", url)
-      await audioManager.play(url, {
+      const proxyUrl = import.meta.env.VITE_API_BASE_URL +`/api/proxy/audio?url=${url}`;
+      await audioManager.play(proxyUrl, {
         fadeIn: !!fadeTime,
         fadeDuration: fadeTime,
         autoPlay,
