@@ -6,7 +6,8 @@ import { isLogin } from "./auth";
 import axiosRetry from "axios-retry";
 
 // 全局地址
-const baseURL: string = String(isDev ? "/api/netease" : import.meta.env["VITE_API_URL"]);
+//const baseURL: string = String(isDev ? "/api/netease" : import.meta.env["VITE_API_URL"]);
+const baseURL: string = String(import.meta.env["VITE_API_URL"]);
 
 // 基础配置
 const server: AxiosInstance = axios.create({
